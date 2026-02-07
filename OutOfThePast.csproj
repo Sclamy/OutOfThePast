@@ -41,6 +41,9 @@
   <ItemGroup>
     <Folder Include="Core\" />
     <Folder Include="Objects\" />
+    <Folder Include="Patches\DecorPatches\" />
+    <Folder Include="Patches\EchelonPatches\" />
+    <Folder Include="Patches\SyncDiskPatches\" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

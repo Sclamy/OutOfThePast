@@ -2,11 +2,20 @@
 
 namespace OutOfThePast
 {
-    public interface IPluginBindings
+    public interface IPluginBindings : IAdjustPayphoneCallDelayBindings, IPlaceholderBindings
+    { }
+    
+    public interface IAdjustPayphoneCallDelayBindings
     {
-        // Binds in the config file as: Prices.SyncDiskPrice
-        // [Binding(500, "The price for the sync disk.", "Prices.SyncDiskPrice")]
-        // int SyncDiskPrice { get; set; }
+        [Binding(30, "Minimum delay before Side Job phone rings", "PayphoneCallDelay.MinimumDelay")]
+        int PayphoneCallDelayMinimumDelay { get; set; }
+        
+        [Binding(45, "Maximum delay before Side Job phone rings", "PayphoneCallDelay.MaximumDelay")]
+        int PayphoneCallDelayMaximumDelay { get; set; }
+    }
+
+    public interface IPlaceholderBindings
+    {
         
     }
 }

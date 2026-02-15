@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="tmp\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>lib\Assembly-CSharp.dll</HintPath>
     </Reference>
@@ -40,6 +44,7 @@
 
   <ItemGroup>
     <Folder Include="Core\" />
+    <Folder Include="dist\" />
     <Folder Include="Objects\" />
     <Folder Include="Patches\DecorPatches\" />
     <Folder Include="Patches\EchelonPatches\" />

@@ -29,6 +29,31 @@ namespace OutOfThePast.Patches.DialoguePatches
         
         // Tracks if we're currently restoring sitting after dialogue ends
         private static bool isRestoringSitting = false;
+
+        // Set when we allow Get Up (Return action) - Postfix will call ReturnFromTransform since OnReturnFromHide was lost
+        private static bool pendingReturnFromTransform = false;
+
+
+        /// <summary> Returns true if the stored chair still exists and can be used. </summary>
+        private static bool IsStoredChairValid()
+        {
+            if (storedSittingInteractable == null) return false;
+            // Unity returns true for destroyed objects when compared to null
+            if (storedSittingInteractable.usagePoint == null) return false;
+            return true;
+        }
+
+        /// <summary> Clear sit-and-talk state when chair is gone (picked up, destroyed, etc.). Only logs when actually clearing. </summary>
+        private static void CleanupStaleSitAndTalkState()
+        {
+            if (storedSittingInteractable == null && !isSitAndTalkActive && !isRestoringSitting)
+                return;  // Nothing to clean
+            storedSittingInteractable = null;
+            isSitAndTalkActive = false;
+            isRestoringSitting = false;
+            pendingReturnFromTransform = false;
+            Plugin.Log.LogInfo("[SitAndTalk] Chair gone or invalid - cleared sit-and-talk state");
+        }
         
         
         /// <summary> Enable and prioritize Talk action when player is sitting and looking at conscious citizen. </summary>
@@ -79,7 +104,7 @@ namespace OutOfThePast.Patches.DialoguePatches
                 var talkAction = __instance.currentActions[talkKey];
                 if (talkAction == null) return;
                 
-                Plugin.Log.LogInfo($"[SitAndTalk] Found Talk on key {talkKey}, enabled: {talkAction.enabled}");
+                // Plugin.Log.LogInfo($"[SitAndTalk] Found Talk on key {talkKey}, enabled: {talkAction.enabled}");
                 
                 // Force enable Talk (it was likely disabled by availableWhileLockedIn)
                 talkAction.enabled = true;
@@ -101,7 +126,7 @@ namespace OutOfThePast.Patches.DialoguePatches
                     var inspectAction = __instance.currentActions[inspectKey];
                     if (inspectAction != null)
                     {
-                        Plugin.Log.LogInfo($"[SitAndTalk] Found Inspect on key {inspectKey}, enabled: {inspectAction.enabled}");
+                        // Plugin.Log.LogInfo($"[SitAndTalk] Found Inspect on key {inspectKey}, enabled: {inspectAction.enabled}");
                         inspectAction.enabled = true;
                         inspectAction.display = true;
                     }
@@ -117,7 +142,7 @@ namespace OutOfThePast.Patches.DialoguePatches
                     __instance.currentActions[secondaryKey] = __instance.currentActions[inspectKey];
                 }
                 
-                Plugin.Log.LogInfo("[SitAndTalk] Assigned Talk to primary, Inspect to secondary");
+                // Plugin.Log.LogInfo("[SitAndTalk] Assigned Talk to primary, Inspect to secondary");
             }
         }
         
@@ -129,10 +154,21 @@ namespace OutOfThePast.Patches.DialoguePatches
             [HarmonyPrefix]
             static bool Prefix(Interactable.UsagePoint __instance, Interactable.UsePointSlot slot, Human newUser, string debug)
             {
-                Plugin.Log.LogInfo($"[SitAndTalk] TrySetUser called: slot={slot}, newUser={(newUser != null ? "Player" : "null")}, isSitAndTalkActive={isSitAndTalkActive}, isRestoringSitting={isRestoringSitting}, hasStoredSitting={storedSittingInteractable != null}");
+                // Verbose: only log when relevant to sit-and-talk (reduced noise)
+                // Plugin.Log.LogInfo($"[SitAndTalk] TrySetUser called: slot={slot}, newUser=...");
                 
-                // If we're in sit-and-talk mode OR restoring, and trying to clear the sitting usagePoint (set to null)
-                if ((isSitAndTalkActive || isRestoringSitting) && newUser == null && storedSittingInteractable != null)
+                // Chair gone (picked up/destroyed) - allow normal behavior and clear our state
+                if (!IsStoredChairValid())
+                {
+                    if (storedSittingInteractable != null)
+                        CleanupStaleSitAndTalkState();
+                    return true;
+                }
+
+                // If we're in sit-and-talk mode, restoring, OR player is sitting in our stored chair, and trying to clear the sitting usagePoint (set to null)
+                bool protectingSitting = (isSitAndTalkActive || isRestoringSitting) ||
+                    (InteractionController.Instance != null && InteractionController.Instance.lockedInInteraction == storedSittingInteractable);
+                if (protectingSitting && newUser == null && storedSittingInteractable != null)
                 {
                     // Check if this is the sitting usagePoint being cleared
                     if (storedSittingInteractable.usagePoint == __instance)
@@ -142,7 +178,7 @@ namespace OutOfThePast.Patches.DialoguePatches
                     }
                     else
                     {
-                        Plugin.Log.LogInfo("[SitAndTalk] TrySetUser clearing different usagePoint, allowing");
+                        // Plugin.Log.LogInfo("[SitAndTalk] TrySetUser clearing different usagePoint, allowing");
                     }
                 }
                 
@@ -157,6 +193,13 @@ namespace OutOfThePast.Patches.DialoguePatches
             [HarmonyPrefix]
             static void Prefix(NewAIController __instance, InteractionController.ConversationType convoType)
             {
+                // Clear any leftover restoration flags from previous session
+                if (isRestoringSitting)
+                {
+                    isRestoringSitting = false;
+                    Plugin.Log.LogInfo("[SitAndTalk] Cleared leftover restoration flag from previous session");
+                }
+                
                 // Check if player is currently sitting (locked-in with usagePoint)
                 InteractionController ic = InteractionController.Instance;
                 if (ic.lockedInInteraction == null) return;
@@ -172,7 +215,13 @@ namespace OutOfThePast.Patches.DialoguePatches
             [HarmonyPostfix]
             static void Postfix(NewAIController __instance, InteractionController.ConversationType convoType)
             {
-                // After TalkTo completes, restore sitting interaction and usagePoint
+                // After TalkTo completes, restore player's sitting interaction and usagePoint (only if chair still exists).
+                // We do NOT touch NPC behavior (stopping, facing, etc.) - that is the game's responsibility.
+                if (!IsStoredChairValid())
+                {
+                    CleanupStaleSitAndTalkState();
+                    return;
+                }
                 if (isSitAndTalkActive && storedSittingInteractable != null)
                 {
                     Plugin.Log.LogInfo("[SitAndTalk] Restoring sitting state after TalkTo");
@@ -216,16 +265,22 @@ namespace OutOfThePast.Patches.DialoguePatches
                 [HarmonyPrefix]
                 static bool Prefix(Player __instance)
                 {
+                    // Chair gone - allow ReturnFromTransform so player can stand
+                    if (!IsStoredChairValid())
+                    {
+                        if (storedSittingInteractable != null) CleanupStaleSitAndTalkState();
+                        return true;
+                    }
                     // Block during active sit-and-talk OR during the restoration cleanup sequence
                     if (isSitAndTalkActive || isRestoringSitting)
                     {
                         Plugin.Log.LogInfo("[SitAndTalk] Blocking ReturnFromTransform to keep player seated");
                         
-                        // If this is during restoration cleanup, clear the restoration flag
+                        // Don't clear flags here - keep them active to continue protecting the usagePoint
+                        // Flags will be cleared on next sit-and-talk or when player actually stands up
                         if (isRestoringSitting)
                         {
-                            isRestoringSitting = false;
-                            Plugin.Log.LogInfo("[SitAndTalk] Final cleanup blocked, all restoration complete");
+                            Plugin.Log.LogInfo("[SitAndTalk] Restoration protection continuing");
                         }
                         
                         return false;  // Skip the return
@@ -243,7 +298,12 @@ namespace OutOfThePast.Patches.DialoguePatches
                 [HarmonyPostfix]
                 static void Postfix(InteractionController __instance, bool val)
                 {
-                    // When dialogue ends (val = false), restore sitting as locked-in
+                    // When dialogue ends (val = false), restore sitting as locked-in (only if chair still exists)
+                    if (!IsStoredChairValid())
+                    {
+                        CleanupStaleSitAndTalkState();
+                        return;
+                    }
                     if (!val && isSitAndTalkActive && storedSittingInteractable != null)
                     {
                         Plugin.Log.LogInfo("[SitAndTalk] Dialogue ended, restoring sitting as locked-in");
@@ -268,22 +328,76 @@ namespace OutOfThePast.Patches.DialoguePatches
             internal static class PreventClearingSitting
             {
                 [HarmonyPrefix]
-                static bool Prefix(Interactable val)
+                static bool Prefix(Interactable val, InteractionController __instance)
                 {
-                    // Block the specific clear attempt that happens right after we restore sitting
+                    // Chair gone - allow normal clear (only clean if we had state)
+                    if (!IsStoredChairValid())
+                    {
+                        if (storedSittingInteractable != null) CleanupStaleSitAndTalkState();
+                        return true;
+                    }
+                    // Switching from chair to NPC: TalkTo set Player.interactingWith=NPC before SetLockedIn.
+                    // SetLockedIn's "clear other actor" then wrongly clears the NPC (we're switching TO them).
+                    // Temporarily point at the chair so the clear uses chair.objectRef (no Actor) and skips clearing the NPC.
+                    if (val != null && val.isActor != null && isSitAndTalkActive && __instance.lockedInInteraction == storedSittingInteractable)
+                    {
+                        Player.Instance.SetInteracting(storedSittingInteractable);
+                    }
+                    // Player voluntarily got up (Get Up action) - allow, set flag so Postfix calls ReturnFromTransform (OnReturnFromHide was lost)
+                    if (val == null && !isRestoringSitting && __instance.lockedInInteraction == storedSittingInteractable)
+                    {
+                        pendingReturnFromTransform = true;
+                        storedSittingInteractable = null;
+                        isSitAndTalkActive = false;
+                        return true;
+                    }
+                    // Block the explicit SetLockedInInteractionMode(null) from OnReturnFromTalkTo during restoration
                     if (val == null && isRestoringSitting)
                     {
                         Plugin.Log.LogInfo("[SitAndTalk] Blocking SetLockedInInteractionMode(null) - preserving restored sitting");
-                        
-                        // Clear sit-and-talk flags but keep restoration flag for ReturnFromTransform
                         isSitAndTalkActive = false;
-                        storedSittingInteractable = null;
-                        Plugin.Log.LogInfo("[SitAndTalk] Sit-and-talk flags cleared, restoration flag active for final block");
-                        
                         return false;  // Skip clearing
                     }
                     
                     return true;  // Allow normal behavior
+                }
+                
+                /// <summary> Outer SetLockedInInteractionMode(null) continues after callback and overwrites our restoration. Fix it.
+                /// Also: when Get Up allowed, call ReturnFromTransform since OnReturnFromHide subscription was lost. </summary>
+                [HarmonyPostfix]
+                static void Postfix(InteractionController __instance)
+                {
+                    // Get Up was allowed - ReturnFromTransform never gets called because OnReturnFromHide was lost during sit-and-talk
+                    if (pendingReturnFromTransform)
+                    {
+                        pendingReturnFromTransform = false;
+                        Player.Instance?.ReturnFromTransform();
+                        return;
+                    }
+                    // Chair gone - don't re-apply (only clean if we had state)
+                    if (!IsStoredChairValid())
+                    {
+                        if (storedSittingInteractable != null) CleanupStaleSitAndTalkState();
+                        return;
+                    }
+                    // The original caller invoked SetLockedInInteractionMode(null), which triggered our restoration in the callback.
+                    // When the callback returned, the original method continued and set lockedInInteraction = null, overwriting our chair.
+                    // If we're restoring and lockedIn got cleared, re-apply our restoration.
+                    if (isRestoringSitting && storedSittingInteractable != null && __instance.lockedInInteraction == null)
+                    {
+                        Plugin.Log.LogInfo("[SitAndTalk] Postfix: outer call overwrote our restoration, re-applying sitting");
+                        __instance.lockedInInteraction = storedSittingInteractable;
+                        __instance.lockedInInteractionRef = 0;
+                        Player.Instance.SetInteracting(storedSittingInteractable);
+                        if (storedSittingInteractable.usagePoint != null)
+                            storedSittingInteractable.usagePoint.TrySetUser(Interactable.UsePointSlot.defaultSlot, Player.Instance);
+                        storedSittingInteractable.UpdateCurrentActions();
+                        __instance.InteractionRaycastCheck();
+                        __instance.UpdateInteractionText();
+                        Player.Instance.UpdateIllegalStatus();
+                        isRestoringSitting = false;
+                        // Keep storedSittingInteractable set so PreventUsagePointClear keeps protecting until player actually Gets Up
+                    }
                 }
             }
     }

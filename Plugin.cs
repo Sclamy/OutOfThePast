@@ -14,7 +14,7 @@ public class Plugin : PluginController<Plugin, IPluginBindings>
 {
     public const string PLUGIN_GUID = "Sclamy.OutOfThePast";
     public const string PLUGIN_NAME = "OutOfThePast";
-    public const string PLUGIN_VERSION = "0.0.4";
+    public const string PLUGIN_VERSION = "0.2.0";
 
     public override void Load()
     {

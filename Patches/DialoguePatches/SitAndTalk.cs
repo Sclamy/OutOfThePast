@@ -21,7 +21,6 @@ namespace OutOfThePast.Patches.DialoguePatches
         // When dialogue ends, we restore Sitting as the locked-in interaction
         // This preserves both dialogue functionality and sitting position/animation
         
-
         private static bool isSitAndTalkActive = false;  // Flag for when SitAndTalk is active
         private static bool isRestoringSitting = false;  // Flag for when actively restoring sitting (after dialogue ends)
 

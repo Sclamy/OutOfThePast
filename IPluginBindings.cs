@@ -2,8 +2,17 @@
 
 namespace OutOfThePast
 {
-    public interface IPluginBindings : IAdjustPayphoneCallDelayBindings, IPlaceholderBindings
+    public interface IPluginBindings : IPatchToggleBindings, IAdjustPayphoneCallDelayBindings
     { }
+    
+    public interface IPatchToggleBindings
+    {
+        [Binding(true, "Enable Improved Payphone Call Delay", "PatchEnable.PayphoneCallDelay")]
+        bool PatchEnablePayphoneCallDelay { get; set; }
+        
+        [Binding(true, "Enable Talking While Sitting", "PatchEnable.SitAndTalk")]
+        bool PatchEnableSitAndTalk { get; set; }
+    }
     
     public interface IAdjustPayphoneCallDelayBindings
     {
@@ -14,8 +23,8 @@ namespace OutOfThePast
         int PayphoneCallDelayMaximumDelay { get; set; }
     }
 
-    public interface IPlaceholderBindings
-    {
+
+
+    
         
-    }
 }

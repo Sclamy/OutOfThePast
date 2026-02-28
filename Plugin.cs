@@ -1,9 +1,11 @@
-﻿using BepInEx;
-// using BepInEx.Logging;
-// using BepInEx.Unity.IL2CPP;
+using BepInEx;
 using SOD.Common;
 using SOD.Common.BepInEx;
+using System;
 using System.Reflection;
+
+using OutOfThePast.Patches.SideJobPatches;
+using OutOfThePast.Patches.DialoguePatches;
 
 namespace OutOfThePast;
 
@@ -18,19 +20,17 @@ public class Plugin : PluginController<Plugin, IPluginBindings>
 
     public override void Load()
     {
-        Harmony.PatchAll(Assembly.GetExecutingAssembly());
+        PatchIfEnabled(typeof(AdjustPayphoneCallDelay), Config.PatchEnablePayphoneCallDelay);
+        PatchIfEnabled(typeof(SitAndTalk), Config.PatchEnableSitAndTalk);
+
         Log.LogInfo($"Plugin {PLUGIN_GUID} v{PLUGIN_VERSION} is loaded!");
-        
-        // Logging Tutorial
-        // Log.LogInfo("This is information");
-        // Log.LogWarning("This is a warning");
-        // Log.LogError("This is an error");
-        
-        // Config Tutorial
-        // Log.LogInfo("SyncDiskPrice: " + Config.SyncDiskPrice);
-        // Log.LogInfo("SomeTextConfig: " + Config.SomeTextConfig);
-        // Log.LogInfo("SomePercentage: " + Config.SomePercentage);
-        // Log.LogInfo("EnableSomething: " + Config.EnableSomething);
-        
+    }
+
+    private void PatchIfEnabled(Type patchType, bool enabled)
+    {
+        if (!enabled) return;
+        Harmony.CreateClassProcessor(patchType).Patch();
+        foreach (var type in patchType.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+            Harmony.CreateClassProcessor(type).Patch();
     }
 }

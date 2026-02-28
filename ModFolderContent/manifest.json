@@ -1,8 +1,8 @@
 ﻿{
   "name": "OutOfThePast",
   "version_number": "0.2.0",
-  "website_url": "",
-  "description": "Shadows of Doubt modding template",
+  "website_url": "https://github.com/Sclamy/OutOfThePast",
+  "description": "Quality of Life improvements",
   "author": "Sclamy",
   "dependencies": ["Venomaus-SODCommon-2.1.2"]
 }

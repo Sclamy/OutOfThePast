@@ -12,8 +12,6 @@ Quality of Life improvements
 
 ## Patches
 
----
-
 ### AdjustPayphoneCallDelay
 When accepting a Side Job that starts with answering a payphone, the game gives the player roughly 5 in-game minutes
 to reach the payphone - barely enough time to sprint there using auto routing, with no room for organic navigation.

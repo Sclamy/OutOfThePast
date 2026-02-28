@@ -14,7 +14,6 @@ namespace OutOfThePast.Patches.SideJobPatches
         // Avoids immediate F1 -> Route -> Sprint
         // Encourages learning and engaging with the city
         // Encourages organic passage of time (so player isn't solving 10 crimes a night)
-
         
         // Check gooseChaseCallTime before possible update
         [HarmonyPrefix]

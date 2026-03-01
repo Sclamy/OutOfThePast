@@ -64,6 +64,9 @@ namespace OutOfThePast.Patches.DialoguePatches
                 if (ic.lockedInInteraction == null) return;
                 if (ic.lockedInInteraction.usagePoint == null) return;
                 
+                // Don't add Talk if the NPC IS the locked-in interactable (e.g. handcuffing)
+                if (__instance == ic.lockedInInteraction) return;
+
                 // Check if looking at a conscious citizen
                 if (__instance.isActor == null) return;
                 if (__instance.isActor.isDead || __instance.isActor.isAsleep || __instance.isActor.isStunned) return;

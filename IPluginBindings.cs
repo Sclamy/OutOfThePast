@@ -12,6 +12,12 @@ namespace OutOfThePast
         
         [Binding(true, "Enable Talking While Sitting", "PatchEnable.SitAndTalk")]
         bool PatchEnableSitAndTalk { get; set; }
+
+        [Binding(true, "Enable Pass Time BugFixes", "PatchEnable.PassTimeBugFixes")]
+        bool PatchEnablePassTimeBugFixes { get; set; }
+        
+        [Binding(true, "Suppress [Target] brackets on all action prompts", "PatchEnable.SuppressAllTargetBrackets")]
+        bool SuppressAllTargetBrackets { get; set; }
     }
     
     public interface IAdjustPayphoneCallDelayBindings

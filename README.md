@@ -9,6 +9,7 @@ Quality of Life improvements
 - **Sit And Talk**: Enables dialogue with NPCs while seated
 - **Pass Time Improvements**: Fixes camera jolt and alarm UI bugs when using Pass Time while sitting
 - **Suppress Target Brackets**: Removes [Target] brackets from all action prompts for a cleaner UI
+- **Echelon Zone Restrictions**: Prevents purchasing apartments and side jobs appearing in echelon zones without the echelon perk
 
 
 ## Patches
@@ -54,6 +55,22 @@ In vanilla, equipping any item causes all action prompts to display a target in 
 even for actions unrelated to the equipped item. Since the target is almost always obvious
 from the first-person camera and equipped item, the brackets add visual clutter without useful information.
 Like all patches, can be disabled if undesired (or interferes with other mods).
+
+---
+
+### EchelonZoneRestrictions
+Prevents players from accessing echelon zone content before unlocking the echelon perk:
+
+1. **Apartment purchases**: Apartments in echelon zones cannot be purchased without the echelon perk.
+   Without this, players could buy an echelon apartment and then have to trespass through
+   the echelon hallway to reach their own home.
+
+2. **Side job filtering**: Side jobs from clients who live in echelon zones are not posted to
+   noticeboards until the player has the echelon perk. Murders and kidnappings are unaffected,
+   preserving echelon zones as a challenging area for major cases.
+
+Note: the game has an unused per-motive `disallowEchelonHome` field that was partially wired into
+side job generation (but never enabled). This patch supersedes that dead code.
 
 ---
 

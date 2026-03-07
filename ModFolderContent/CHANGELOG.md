@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 0.4.0
+ - **Echelon Zone** restrictions
+   - Prevent purchasing apartments in echelon zones without the echelon perk
+   - Prevent side jobs from echelon-zone clients from appearing until the player has the echelon perk
+
 ### 0.3.0
  - **Pass Time** bug fixes, including
    - Prevent camera jolt when using Pass Time / Set Alarm (while sitting)

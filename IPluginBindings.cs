@@ -18,6 +18,9 @@ namespace OutOfThePast
         
         [Binding(true, "Suppress [Target] brackets on all action prompts", "PatchEnable.SuppressAllTargetBrackets")]
         bool SuppressAllTargetBrackets { get; set; }
+
+        [Binding(true, "Enable Echelon Zone Restrictions", "PatchEnable.EchelonZoneRestrictions")]
+        bool PatchEnableEchelonZoneRestrictions { get; set; }
     }
     
     public interface IAdjustPayphoneCallDelayBindings

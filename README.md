@@ -10,6 +10,9 @@ Quality of Life improvements
 - **Pass Time Improvements**: Fixes camera jolt and alarm UI bugs when using Pass Time while sitting
 - **Suppress Target Brackets**: Removes [Target] brackets from all action prompts for a cleaner UI
 - **Echelon Zone Restrictions**: Prevents purchasing apartments and side jobs appearing in echelon zones without the echelon perk
+- **Extended Decor Placement**: Decor items are held further from the camera, making it easier to place items on surfaces like desks
+- **Place on Ashtrays**: Looking at an ashtray with a cigarette butt equipped shows "Place" instead of "Throw"
+- **Fix Wok Rotation**: Wok is no longer held upside-down when picked up
 
 
 ## Patches
@@ -71,6 +74,24 @@ Prevents players from accessing echelon zone content before unlocking the echelo
 
 Note: the game has an unused per-motive `disallowEchelonHome` field that was partially wired into
 side job generation (but never enabled). This patch supersedes that dead code.
+
+---
+
+### ExtendedDecorPlacement
+Increases how far decor items are held from the camera during apartment placement, making it possible to place items at the back of desks and tables without using freecam.
+
+**Config:**
+- `Decor.DecorPlaceDistance`: default 0.9 (distance from camera)
+
+---
+
+### PlaceOnAshtrays
+Looking at an ashtray with a cigarette butt equipped shows "Place" instead of "Throw", letting you place the butt in the ashtray rather than throwing it.
+
+---
+
+### FixWokRotation
+The wok item is held upside-down when picked up due to an incorrect rotation offset in its PhysicsProfile. This patch flips the X rotation by 180 degrees to correct it.
 
 ---
 

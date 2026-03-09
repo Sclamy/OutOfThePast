@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 0.5.0
+ - **Extended Decor Placement**: Decor items are held further from the camera, making it easier to place items on surfaces like desks
+ - **Place on Ashtrays**: Looking at an ashtray with a cigarette butt equipped shows "Place" action instead of "Throw"
+ - **Fix Wok Rotation**: Wok item is no longer held upside-down when picked up
+
 ### 0.4.0
  - **Echelon Zone** restrictions
    - Prevent purchasing apartments in echelon zones without the echelon perk

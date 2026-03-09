@@ -9,6 +9,7 @@ using OutOfThePast.Patches.DialoguePatches;
 using OutOfThePast.Patches.BugFixPatches;
 using OutOfThePast.Patches.UIPatches;
 using OutOfThePast.Patches.EchelonPatches;
+using OutOfThePast.Patches.DecorPatches;
 
 namespace OutOfThePast;
 
@@ -19,15 +20,18 @@ public class Plugin : PluginController<Plugin, IPluginBindings>
 {
     public const string PLUGIN_GUID = "Sclamy.OutOfThePast";
     public const string PLUGIN_NAME = "OutOfThePast";
-    public const string PLUGIN_VERSION = "0.4.0";
+    public const string PLUGIN_VERSION = "0.5.0";
 
     public override void Load()
     {
         PatchIfEnabled(typeof(AdjustPayphoneCallDelay), Config.PatchEnablePayphoneCallDelay);
         PatchIfEnabled(typeof(SitAndTalk), Config.PatchEnableSitAndTalk);
         PatchIfEnabled(typeof(PassTimeImprovements), Config.PatchEnablePassTimeBugFixes);
-        PatchIfEnabled(typeof(SuppressAllTargetBrackets), Config.SuppressAllTargetBrackets);
+        PatchIfEnabled(typeof(SuppressAllTargetBrackets), Config.PatchEnableSuppressAllTargetBrackets);
         PatchIfEnabled(typeof(EchelonZoneRestrictions), Config.PatchEnableEchelonZoneRestrictions);
+        PatchIfEnabled(typeof(ExtendedDecorCarryDistance), Config.PatchEnableExtendDecorPlacement);
+        PatchIfEnabled(typeof(PlaceInAshtray), Config.PatchEnablePlaceCigaretteButtInAshtray);
+        PatchIfEnabled(typeof(FixWokRotation), Config.PatchEnableFixWokRotation);
 
         Log.LogInfo($"Plugin {PLUGIN_GUID} v{PLUGIN_VERSION} is loaded!");
     }

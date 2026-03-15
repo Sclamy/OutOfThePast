@@ -2,7 +2,7 @@
 
 namespace OutOfThePast
 {
-    public interface IPluginBindings : IPatchToggleBindings, IAdjustPayphoneCallDelayBindings,
+    public interface IPluginBindings : IPatchToggleBindings, IDebugBindings, IAdjustPayphoneCallDelayBindings,
         IDecorBindings
     { }
     
@@ -31,6 +31,13 @@ namespace OutOfThePast
 
         [Binding(true, "Fix Wok held upside-down", "_PatchEnable.FixWokRotation")]
         bool PatchEnableFixWokRotation { get; set; }
+    }
+
+
+    public interface IDebugBindings
+    {
+        [Binding(false, "Enable SitAndTalk Debug Console", "|Debug.SitAndTalk")]
+        bool DebugSitAndTalk { get; set; }
     }
     
     public interface IAdjustPayphoneCallDelayBindings

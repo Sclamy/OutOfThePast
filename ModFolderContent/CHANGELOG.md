@@ -1,5 +1,8 @@
 # CHANGELOG
 
+### 0.5.1
+ - *SitAndTalk BugFix + Optional (Config) Debug Logging*
+
 ### 0.5.0
  - **Extended Decor Placement**: Decor items are held further from the camera, making it easier to place items on surfaces like desks
  - **Place on Ashtrays**: Looking at an ashtray with a cigarette butt equipped shows "Place" action instead of "Throw"

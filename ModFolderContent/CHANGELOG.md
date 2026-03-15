@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 0.6.0
+ - **No Pause Case Board**: Opening the case board no longer pauses the game
+   - Original patch by *piepieonline*
+ - **Pass Time Requires Watch** *(optional, off by default)*: Hides Pass Time while sitting unless the watch is drawn
+
 ### 0.5.1
  - *SitAndTalk BugFix + Optional (Config) Debug Logging*
 

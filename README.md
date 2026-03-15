@@ -4,10 +4,16 @@ Quality of Life improvements
 
 *"It was the bottom of the barrel, and I was scraping it."*
 
+#### Additional Contributors
+ - Venomaus
+ - piepieonline
+
 ## Summary
 - **Adjust Payphone Call Delay**: Increases side-job payphone call window from ~5 minutes to 30-45 minutes
 - **Sit And Talk**: Enables dialogue with NPCs while seated
 - **Pass Time Improvements**: Fixes camera jolt and alarm UI bugs when using Pass Time while sitting
+- **Pass Time Requires Watch** *(optional, off by default)*: Hides Pass Time actions while sitting unless the watch is drawn
+- **No Pause Case Board**: Prevents the game from pausing when opening the case board or notebook
 - **Suppress Target Brackets**: Removes [Target] brackets from all action prompts for a cleaner UI
 - **Echelon Zone Restrictions**: Prevents purchasing apartments and side jobs appearing in echelon zones without the echelon perk
 - **Extended Decor Placement**: Decor items are held further from the camera, making it easier to place items on surfaces like desks
@@ -48,6 +54,19 @@ Fixes two bugs related to using Pass Time while sitting:
 2. **Alarm persists on item switch**: If the player opens the Pass Time menu (which equips the watch)
    and then switches to a different item via hotkey, the alarm UI and sounds persist.
    This patch cancels the alarm and resets the action set when a non-watch item is selected.
+
+---
+
+### PassTimeRequiresWatch *(optional, off by default)*
+Hides the Pass Time and Set Alarm actions while seated unless the watch is drawn.
+Equipping or unequipping the watch while seated immediately updates the available actions.
+
+---
+
+### NoPauseCaseBoard
+Prevents the game from pausing when opening the case board or notebook.
+In vanilla, opening either pauses the game unless the player is auto-traveling.
+This patch allows time to continue passing while reviewing evidence or notes.
 
 ---
 

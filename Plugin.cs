@@ -10,6 +10,7 @@ using OutOfThePast.Patches.BugFixPatches;
 using OutOfThePast.Patches.UIPatches;
 using OutOfThePast.Patches.EchelonPatches;
 using OutOfThePast.Patches.DecorPatches;
+using OutOfThePast.Patches.InteractionPatches;
 
 namespace OutOfThePast;
 
@@ -20,7 +21,7 @@ public class Plugin : PluginController<Plugin, IPluginBindings>
 {
     public const string PLUGIN_GUID = "Sclamy.OutOfThePast";
     public const string PLUGIN_NAME = "OutOfThePast";
-    public const string PLUGIN_VERSION = "0.5.1";
+    public const string PLUGIN_VERSION = "0.6.0";
 
     public override void Load()
     {
@@ -32,6 +33,8 @@ public class Plugin : PluginController<Plugin, IPluginBindings>
         PatchIfEnabled(typeof(ExtendedDecorCarryDistance), Config.PatchEnableExtendDecorPlacement);
         PatchIfEnabled(typeof(PlaceInAshtray), Config.PatchEnablePlaceCigaretteButtInAshtray);
         PatchIfEnabled(typeof(FixWokRotation), Config.PatchEnableFixWokRotation);
+        PatchIfEnabled(typeof(PassTimeRequiresWatch), Config.PatchExtraEnablePassTimeRequiresWatch);
+        PatchIfEnabled(typeof(NoPauseCaseBoard), Config.PatchEnableNoPauseCaseBoard);
 
         Log.LogInfo($"Plugin {PLUGIN_GUID} v{PLUGIN_VERSION} is loaded!");
     }

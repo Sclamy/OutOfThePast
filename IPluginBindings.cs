@@ -2,8 +2,8 @@
 
 namespace OutOfThePast
 {
-    public interface IPluginBindings : IPatchToggleBindings, IDebugBindings, IAdjustPayphoneCallDelayBindings,
-        IDecorBindings
+    public interface IPluginBindings : IPatchToggleBindings, IPatchExtraBindings, 
+        IAdjustPayphoneCallDelayBindings, IDecorBindings, IDebugBindings
     { }
     
     public interface IPatchToggleBindings
@@ -29,23 +29,27 @@ namespace OutOfThePast
         [Binding(true, "Enable Place Cigarette Butt in Ashtray", "_PatchEnable.PlaceCigaretteButtInAshtray")]
         bool PatchEnablePlaceCigaretteButtInAshtray { get; set; }
 
-        [Binding(true, "Fix Wok held upside-down", "_PatchEnable.FixWokRotation")]
+        [Binding(true, "Fix Wok being held upside-down", "_PatchEnable.FixWokRotation")]
         bool PatchEnableFixWokRotation { get; set; }
+
+        [Binding(true, "Don't pause game when opening the case board or notebook", "_PatchEnable.NoPauseCaseBoard")]
+        bool PatchEnableNoPauseCaseBoard { get; set; }
     }
 
 
-    public interface IDebugBindings
+    public interface IPatchExtraBindings
     {
-        [Binding(false, "Enable SitAndTalk Debug Console", "|Debug.SitAndTalk")]
-        bool DebugSitAndTalk { get; set; }
+        [Binding(false, "Require watch to be held for Pass Time while sitting", "_PatchExtra.PassTimeRequiresWatch")]
+        bool PatchExtraEnablePassTimeRequiresWatch { get; set; }
     }
+
     
     public interface IAdjustPayphoneCallDelayBindings
     {
-        [Binding(30, "Minimum delay (minutes) before Side Job phone rings", "PayphoneCallDelay.MinimumDelay")]
+        [Binding(20, "Minimum delay (minutes) before Side Job phone rings", "PayphoneCallDelay.MinimumDelay")]
         int PayphoneCallDelayMinimumDelay { get; set; }
 
-        [Binding(45, "Maximum delay (minutes) before Side Job phone rings", "PayphoneCallDelay.MaximumDelay")]
+        [Binding(30, "Maximum delay (minutes) before Side Job phone rings", "PayphoneCallDelay.MaximumDelay")]
         int PayphoneCallDelayMaximumDelay { get; set; }
     }
 
@@ -55,4 +59,9 @@ namespace OutOfThePast
         float DecorPlaceDistance { get; set; }
     }
     
+    public interface IDebugBindings
+    {
+        [Binding(false, "Enable SitAndTalk Debug Console", "zzz.Debug.SitAndTalk")]
+        bool DebugSitAndTalk { get; set; }
+    }
 }

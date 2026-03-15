@@ -1,6 +1,5 @@
 using HarmonyLib;
 using UnityEngine;
-using SOD.Common;
 using System;
 
 
@@ -233,7 +232,7 @@ namespace OutOfThePast.Patches.DialoguePatches
         internal static class PreventUsagePointClear
         {
             [HarmonyPrefix]
-            static bool Prefix(Interactable.UsagePoint __instance, Interactable.UsePointSlot slot, Human newUser, string debug)
+            static bool Prefix(Interactable.UsagePoint __instance, Human newUser)
             {
                 if (!IsStoredChairValid())
                 {
@@ -406,7 +405,7 @@ namespace OutOfThePast.Patches.DialoguePatches
         internal static class SkipTransformWhileSitting
         {
             [HarmonyPrefix]
-            static bool Prefix(Player __instance, PlayerTransitionPreset newEnterTransition, Interactable newInteractable)
+            static bool Prefix(PlayerTransitionPreset newEnterTransition, Interactable newInteractable)
             {
                 if (!AnyProtectionActive) return true;
 
@@ -473,7 +472,7 @@ namespace OutOfThePast.Patches.DialoguePatches
         internal static class PreventReturnFromTransform
         {
             [HarmonyPrefix]
-            static bool Prefix(Player __instance)
+            static bool Prefix()
             {
                 if (!AnyProtectionActive) return true;
 
@@ -494,7 +493,7 @@ namespace OutOfThePast.Patches.DialoguePatches
         internal static class RestoreSittingAfterDialogue
         {
             [HarmonyPostfix]
-            static void Postfix(InteractionController __instance, bool val)
+            static void Postfix(bool val)
             {
                 if (!IsStoredChairValid())
                 {

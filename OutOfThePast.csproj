@@ -58,7 +58,8 @@
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <R2ProfilePlugins>$(AppData)\r2modmanPlus-local\ShadowsofDoubt\profiles\Default\BepInEx\plugins</R2ProfilePlugins>
+    <R2Profile>$(AppData)\r2modmanPlus-local\ShadowsofDoubt\profiles\Default</R2Profile>
+    <R2ProfilePlugins>$(R2Profile)\BepInEx\plugins</R2ProfilePlugins>
 
     <!-- Hard-code author -->
     <ModAuthor>Sclamy</ModAuthor>
@@ -75,6 +76,12 @@
           DestinationFiles="$(ModDeployDir)\$(TargetFileName)"
           OverwriteReadOnlyFiles="true"
           SkipUnchangedFiles="false" />
+    <Copy SourceFiles="ModFolderContent\manifest.json"
+          DestinationFolder="$(ModDeployDir)"
+          OverwriteReadOnlyFiles="true"
+          SkipUnchangedFiles="false" />
+    <Exec Condition="Exists('$(ModDeployDir)\mm_v2_manifest.json')"
+          Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\SyncR2Version.ps1&quot; -ManifestPath &quot;$(MSBuildProjectDirectory)\ModFolderContent\manifest.json&quot; -MmManifestPath &quot;$(ModDeployDir)\mm_v2_manifest.json&quot; -ModsYmlPath &quot;$(R2Profile)\mods.yml&quot;" />
   </Target>
   
 </Project>

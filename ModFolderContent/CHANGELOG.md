@@ -1,5 +1,8 @@
 # CHANGELOG
 
+### 0.6.1
+ - *No Pause Case Board now disables movement, preventing unintended interactions when editing sticky notes*
+
 ### 0.6.0
  - **No Pause Case Board**: Opening the case board no longer pauses the game
    - Original patch by *piepieonline*

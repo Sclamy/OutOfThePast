@@ -47,5 +47,30 @@ namespace OutOfThePast.Patches.UIPatches
                 didOverride = false;
             }
         }
+
+        // Disable player movement while the case board is open to prevent WASD
+        // from moving the character (especially while typing in sticky notes)
+        [HarmonyPatch(typeof(InterfaceController), nameof(InterfaceController.SetDesktopMode))]
+        internal static class DisableMovementInDesktopMode
+        {
+            private static bool shouldRestoreMovement;
+
+            [HarmonyPostfix]
+            static void Postfix(bool val)
+            {
+                if (!Plugin.Instance.Config.PatchEnableNoPauseCaseBoard) return;
+
+                if (val)
+                {
+                    shouldRestoreMovement = InteractionController.Instance.lockedInInteraction == null;
+                    Player.Instance.EnablePlayerMovement(false);
+                }
+                else if (shouldRestoreMovement)
+                {
+                    Player.Instance.EnablePlayerMovement(true);
+                    shouldRestoreMovement = false;
+                }
+            }
+        }
     }
 }
